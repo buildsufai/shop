@@ -7,5 +7,7 @@
  */
 
 class ShopModule extends CWebModule {
-
+    public static function t($message, $params) {
+        return Yii::t('ShopModule.shop', $message, $params);
+    }
 } 
