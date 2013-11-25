@@ -23,7 +23,7 @@ To add shopping cart widget to your views just add following code:
 
 ```php
 <?php
-$this->widget('shop.widgets.ShopCartWidget, array(
+$this->widget('shop.widgets.ShopCartWidget', array(
     ...
 ));
 ?>
