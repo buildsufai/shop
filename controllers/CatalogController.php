@@ -12,7 +12,6 @@ class CatalogController extends Controller
     public function actionIndex()
     {
         $model = new ProductCategory('search');
-        $model->unsetAttributes();
         if (isset($_GET['ProductCategory'])) {
             $model->setAttributes($_GET['ProductCategory']);
         }

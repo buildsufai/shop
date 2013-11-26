@@ -7,22 +7,23 @@
  * @var ProductCategory $data
  */
 
+
+$url = array('/shop/catalog/category', 'id' => $data->id);
 ?>
 
 <ul class="media-list">
     <li class="media">
         <? if ($data->image) {
             echo CHtml::link(
-                CHtml::image($data->image, $data->name, array('class' => 'media-object')),
-                array('shop/catalog/category', 'id' => $data->id)
+                CHtml::image($data->image, $data->name, array('class' => 'media-object')), $url
             );
         } ?>
         <div class="media-body">
-            <h4 class="media-heading"><?= $data->name ?></h4>
+            <h4 class="media-heading"><?= CHtml::link($data->name, $url) ?></h4>
             <?= $data->description ?>
             <ul>
                 <? foreach ($data->categories as $child): ?>
-                    <li><?= CHtml::link($child->name, array('shop/catalog/category', 'id' => $child->id)) ?></li>
+                    <li><?= CHtml::link($child->name, array('/shop/catalog/category', 'id' => $child->id)) ?></li>
                 <? endforeach ?>
             </ul>
         </div>

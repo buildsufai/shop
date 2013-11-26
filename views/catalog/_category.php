@@ -7,7 +7,7 @@
  * @var ProductCategory $data
  */
 
-$url = array('shop/catalog/category', 'id' => $data->id);
+$url = array('/shop/catalog/category', 'id' => $data->id);
 ?>
 
 <ul class="media-list">
@@ -22,7 +22,7 @@ $url = array('shop/catalog/category', 'id' => $data->id);
             <?= $data->description ?>
             <ul>
                 <? foreach ($data->categories as $child): ?>
-                    <li><?= CHtml::link($child->name, array('shop/catalog/category', 'id' => $child->id)) ?></li>
+                    <li><?= CHtml::link($child->name, array('/shop/catalog/category', 'id' => $child->id)) ?></li>
                 <? endforeach ?>
             </ul>
         </div>
