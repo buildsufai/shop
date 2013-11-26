@@ -18,5 +18,11 @@ return array(
         'fixture' => array(
             'class' => 'system.test.CDbFixtureManager',
         ),
+        'db' => array(
+            'connectionString' => 'mysql:host=localhost;dbname=shop',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
+        ),
     ),
 );
