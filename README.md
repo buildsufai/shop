@@ -25,8 +25,8 @@ After place the Shop configuration array inside your 'components' definitions.
 ),
 ```
 
-Shopcart widget
----------------
+Shopping Cart widget
+--------------------
 
 To add shopping cart widget to your views just add following code:
 
