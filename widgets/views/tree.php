@@ -9,5 +9,5 @@
 
 $this->widget('bootstrap.widgets.TbListView', array(
     'dataProvider' => $model->search(),
-    'itemView' => '_category'
+    'itemView' => '../../views/catalog/_category'
 ));
