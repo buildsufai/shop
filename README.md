@@ -38,6 +38,11 @@ $this->widget('shop.widgets.ShopCartWidget', array(
 ?>
 ```
 
+How to extend widget views
+--------------------------
+
+You can extend views of widgets included by placing your views into theme views folder (i.e. themes/classic/CatalogMapWidget/tree.php).
+
 Dependencies
 ------------
 - [YiiBooster](https://github.com/clevertech/yiibooster "Yii bootstrap widget toolkit")
