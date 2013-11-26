@@ -5,6 +5,8 @@
  * Time: 4:50
  *
  */
+
+Yii::setPathOfAlias('shop', dirname(__FILE__) . '/../..');
 return array(
     'basePath' => dirname(__FILE__) . '/../..',
 
