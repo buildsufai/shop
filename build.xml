@@ -5,7 +5,7 @@
             depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpcb"/>
 
     <target name="build-parallel"
-            depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
+            depends="prepare,lint,tools-parallel,phpcb"/>
 
     <target name="tools-parallel" description="Run tools in parallel">
         <parallel threadCount="2">
@@ -112,11 +112,15 @@
     </target>
 
     <target name="phpdox" description="Generate API documentation using phpDox">
-        <exec executable="phpdox"/>
+        <exec executable="phpdox">
+            <arg value="-f"/>
+            <arg value="${basedir}/build/phpdox.xml"/>
+            <arg path="${basedir}"/>
+        </exec>
     </target>
 
     <target name="phpunit" description="Run unit tests with PHPUnit">
-        <exec executable="phpunit" failonerror="true"/>
+        <exec executable="phpunit" failonerror="false"/>
     </target>
 
     <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
