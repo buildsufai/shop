@@ -20,7 +20,7 @@ return array(
         ),
         'db' => array(
             'connectionString' => 'mysql:host=localhost;dbname=shop',
-            'username' => 'root',
+            'username' => 'shop',
             'password' => '',
             'charset' => 'utf8',
         ),
