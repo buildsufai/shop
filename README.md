@@ -3,6 +3,15 @@ shop
 
 Shop module for Yii applications
 
+Features
+--------
+
+- Shopping Cart widget
+- unlimited Category tree
+- multiple Product images
+- multiple Product characteristics
+- Manufacturers
+
 Installation
 ------------
 
