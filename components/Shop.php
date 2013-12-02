@@ -5,7 +5,7 @@
  * Time: 0:44
  *
  */
-
+Yii::import('shop.models.*');
 class Shop extends CComponent {
 
     protected $count = 0;
