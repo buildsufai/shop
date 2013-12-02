@@ -8,6 +8,10 @@
 Yii::import('shop.models.*');
 class Shop extends CComponent {
 
+    public $priceModels = array();
+    public $currencies = array();
+
+
     protected $count = 0;
     protected $total = 0;
 
@@ -47,69 +51,97 @@ class Shop extends CComponent {
         for ($i = 7; $i <= $data->sheets[0]['numRows']; $i++) {
             $row = $data->sheets[0]['cells'][$i];
             if($this->isCategory($row)) {
-                $this->createCategoryFromRow($row);
+                $parentId = $this->isProductRow ? 0 : $this->currentCategory->id;
+                $this->createCategoryFromRow($parentId, $row);
             } else {
-                $this->createPricesFromRow($row);
+                $this->createProductFromRow($this->currentCategory, $row);
+                $this->createProductPricesFromRow($this->currentProduct, $row);
             }
         }
-
         $stat['rowCount'] = $data->sheets[0]['numRows'];
         return $stat;
     }
 
     /**
      * Запись всех ошибок модели в лог
-     * @param $model
+     * @param CActiveRecord $model
      */
     public function logErrors($model) {
-        foreach($model->errors as $error) {
-            Yii::log($error->message, CLogger::LEVEL_ERROR);
+        if($model->hasErrors()) {
+            $message = ShopModule::t('Model imported: {name}', array('{name}'=>$model->name));
+            $status = CLogger::LEVEL_INFO;
+        } else {
+            $message = ShopModule::t('Validation errors: {name}', array('{name}'=>$model->name));
+            $status = CLogger::LEVEL_ERROR;
+            foreach($model->errors as $error) {
+                Yii::log($error->message, $status);
+            }
         }
+        Yii::log($message, $status);
     }
 
     protected $currentCategory;
+    protected $currentProduct;
     protected $isProductRow = true;
 
-    public function createCategoryFromRow($row) {
+    /**
+     * Создает категорию из строки Excel
+     *
+     * @param int $parentId
+     * @param array $row
+     * @return bool
+     */
+    public function createCategoryFromRow($parentId, $row) {
+        $this->isProductRow = false; // строка категории потому что
+
         $categoryName = $row[1];
+
         $category = new ProductCategory();
-        if(!$this->isProductRow) {
-            $category->parent_id = $this->currentCategory->id;
-        }
-        $this->isProductRow = false;
         $category->name = $categoryName;
+        $category->parent_id = $parentId;
         $category->is_main = false;
-        if($category->validate() && $category->save()) {
-            $message = ShopModule::t('Category imported: {categoryName}', array('{categoryName}'=>$categoryName));
-        } else {
-            $message = ShopModule::t('Ошибка проверки категории: {categoryName}', array('{categoryName}'=>$categoryName));
-        }
-        Yii::log($message);
+
+        $result = ($category->validate() && $category->save());
+
+        $this->logErrors($category);
         $this->currentCategory = $category;
-        return $category;
+        return $result;
     }
 
-    public function createProductFromRow($row) {
+    /**
+     * Создает товар из строки Excel
+     *
+     * @param ProductCategory $category
+     * @param array $row
+     * @return bool
+     */
+    public function createProductFromRow($category, $row) {
         $this->isProductRow = true;
+
         $productName = $row[1];
         $kod = $row[2];
         $unit = $row[3];
+
         $product = new Product();
         $product->name = $productName;
         $product->article = $kod;
+        $product->category_id = $category->id;
         $product->unit = $unit;
-        if($product->validate() && $product->save()) {
-            $message = ShopModule::t('Category imported: {categoryName}', array('{categoryName}'=>$productName));
-        } else {
-            $message = ShopModule::t('Ошибка проверки категории: {categoryName}', array('{categoryName}'=>$productName));
-        }
-        Yii::log($message);
-        $this->logErrors($product);
 
+        $result = ($product->validate() && $product->save());
+
+        $this->logErrors($product);
+        $this->currentProduct = $product;
+        return $result;
     }
 
     public function createProductPricesFromRow($product, $row) {
-        $prices = array();
+        foreach($this->priceModels as $i=>$model) {
+            $index = 3+$i;
+            if(isset($row[$index])) {
+                $price = new Pro
+            }
+        }
         return $prices;
     }
 
