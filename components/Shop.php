@@ -43,23 +43,82 @@ class Shop extends CComponent {
 
         $data->read($filename);
         $data->sheets[0]['cells'];
+        $currentCategory = null;
         for ($i = 7; $i <= $data->sheets[0]['numRows']; $i++) {
-            //    var_dump($)
-            //if(isset($data->sheets[0]['cells'][$i][1])){
-            //    echo "\"".$data->sheets[0]['cells'][$i][1]."\",";
-            //    var_dump($data->sheets[0]['cellsInfo'][$i][1]);
-           // }
-
-            /*
-            for ($j = 1; $j <= $data->sheets[0]['numCols']; $j++) {
-                echo "\"".$data->sheets[0]['cells'][$i][$j]."\",";
-            }*/
-            echo "<br>\n";
-
+            $row = $data->sheets[0]['cells'][$i];
+            if($this->isCategory($row)) {
+                $this->createCategoryFromRow($row);
+            } else {
+                $this->createPricesFromRow($row);
+            }
         }
-        var_dump($data->sheets[0]['numRows']);
+
         $stat['rowCount'] = $data->sheets[0]['numRows'];
         return $stat;
     }
+
+    /**
+     * Запись всех ошибок модели в лог
+     * @param $model
+     */
+    public function logErrors($model) {
+        foreach($model->errors as $error) {
+            Yii::log($error->message, CLogger::LEVEL_ERROR);
+        }
+    }
+
+    protected $currentCategory;
+    protected $isProductRow = true;
+
+    public function createCategoryFromRow($row) {
+        $categoryName = $row[1];
+        $category = new ProductCategory();
+        if(!$this->isProductRow) {
+            $category->parent_id = $this->currentCategory->id;
+        }
+        $this->isProductRow = false;
+        $category->name = $categoryName;
+        $category->is_main = false;
+        if($category->validate() && $category->save()) {
+            $message = ShopModule::t('Category imported: {categoryName}', array('{categoryName}'=>$categoryName));
+        } else {
+            $message = ShopModule::t('Ошибка проверки категории: {categoryName}', array('{categoryName}'=>$categoryName));
+        }
+        Yii::log($message);
+        $this->currentCategory = $category;
+        return $category;
+    }
+
+    public function createProductFromRow($row) {
+        $this->isProductRow = true;
+        $productName = $row[1];
+        $kod = $row[2];
+        $unit = $row[3];
+        $product = new Product();
+        $product->name = $productName;
+        $product->article = $kod;
+        $product->unit = $unit;
+        if($product->validate() && $product->save()) {
+            $message = ShopModule::t('Category imported: {categoryName}', array('{categoryName}'=>$productName));
+        } else {
+            $message = ShopModule::t('Ошибка проверки категории: {categoryName}', array('{categoryName}'=>$productName));
+        }
+        Yii::log($message);
+        $this->logErrors($product);
+
+    }
+
+    public function createProductPricesFromRow($product, $row) {
+        $prices = array();
+        return $prices;
+    }
+
+
+    public function isCategory($row) {
+        $result = count($row)==1;
+        return $result;
+    }
+
+
 
 } 

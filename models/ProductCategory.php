@@ -38,11 +38,11 @@ class ProductCategory extends CActiveRecord
         // will receive user inputs.
         return array(
             array('name', 'required'),
-            array('parent_id, ord, main', 'numerical', 'integerOnly' => true),
+            array('parent_id, ord, is_main', 'numerical', 'integerOnly' => true),
             array('name, image', 'length', 'max' => 255),
             array('description, content', 'safe'),
             // The following rule is used by search().
-            array('id, name, parent_id, description, content, main', 'safe', 'on' => 'search'),
+            array('id, name, parent_id, description, content, is_main', 'safe', 'on' => 'search'),
         );
     }
 
