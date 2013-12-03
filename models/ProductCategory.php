@@ -74,7 +74,7 @@ class ProductCategory extends CActiveRecord
             'description' => 'Description',
             'content' => 'Content',
             'ord' => 'Ord',
-            'main' => 'Main',
+            'is_main' => 'Main',
             'image' => 'Image',
         );
     }
@@ -101,7 +101,7 @@ class ProductCategory extends CActiveRecord
         $criteria->compare('parent_id', $this->parent_id);
         $criteria->compare('description', $this->description, true);
         $criteria->compare('content', $this->content, true);
-        $criteria->compare('main', $this->main);
+        $criteria->compare('is_main', $this->is_main);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
