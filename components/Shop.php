@@ -5,7 +5,9 @@
  * Time: 0:44
  *
  */
-Yii::import('shop.models.*');
+Yii::import('application.modules.shop.*');
+Yii::import('application.modules.shop.components.*');
+Yii::import('application.modules.shop.models.*');
 class Shop extends CComponent {
 
     public $priceModels = array();
@@ -14,6 +16,7 @@ class Shop extends CComponent {
 
     protected $count = 0;
     protected $total = 0;
+
 
     /**
      * @return mixed
@@ -36,13 +39,45 @@ class Shop extends CComponent {
     public function init() {
     }
 
+
+    /**
+     * Запись всех ошибок модели в лог
+     * @param CActiveRecord $model
+     */
+    public function logErrors($model) {
+        if($model->hasErrors()) {
+            $message = ShopModule::t('Validation errors: {name}', array('{name}'=>$model->name));
+            $status = CLogger::LEVEL_ERROR;
+            $errors = $model->getErrors();
+            foreach($errors as $attr=>$error) {
+                $errorMessage = $attr.': '.implode(', ', $error);
+                var_dump($errorMessage);
+                Yii::log($errorMessage, $status);
+            }
+        } else {
+            $message = ShopModule::t('Model imported: {name}', array('{name}'=>$model->name));
+            $status = CLogger::LEVEL_INFO;
+        }
+        Yii::log($message, $status);
+    }
+
+    //--------------------------------------------------------------------------------------------  Excel import
+
+    public $baseIndex = 12;
+    public $cleanTables = false;
+
+    protected function cleanTables() {
+        ProductPrice::model()->deleteAll();
+        Product::model()->deleteAll();
+        ProductCategory::model()->deleteAll();
+    }
+
     public function importCatalogFromExcel($filename, &$stat = array()) {
-        require_once Yii::getPathOfAlias('shop.extensions').'/Excel/reader.php';
+        Yii::import('application.modules.shop.components.reader', true);
+
+        if($this->cleanTables) $this->cleanTables();
 
         $data = new Spreadsheet_Excel_Reader();
-
-
-// Set output Encoding.
         $data->setOutputEncoding('UTF8');
 
         $data->read($filename);
@@ -61,25 +96,6 @@ class Shop extends CComponent {
         $stat['rowCount'] = $data->sheets[0]['numRows'];
         return $stat;
     }
-
-    /**
-     * Запись всех ошибок модели в лог
-     * @param CActiveRecord $model
-     */
-    public function logErrors($model) {
-        if($model->hasErrors()) {
-            $message = ShopModule::t('Model imported: {name}', array('{name}'=>$model->name));
-            $status = CLogger::LEVEL_INFO;
-        } else {
-            $message = ShopModule::t('Validation errors: {name}', array('{name}'=>$model->name));
-            $status = CLogger::LEVEL_ERROR;
-            foreach($model->errors as $error) {
-                Yii::log($error->message, $status);
-            }
-        }
-        Yii::log($message, $status);
-    }
-
     protected $currentCategory;
     protected $currentProduct;
     protected $isProductRow = true;
@@ -101,7 +117,7 @@ class Shop extends CComponent {
         $category->parent_id = $parentId;
         $category->is_main = false;
 
-        $result = ($category->validate() && $category->save());
+        $result = $category->save();
 
         $this->logErrors($category);
         $this->currentCategory = $category;
@@ -118,17 +134,18 @@ class Shop extends CComponent {
     public function createProductFromRow($category, $row) {
         $this->isProductRow = true;
 
+        $baseIndex = $this->baseIndex;
         $productName = $row[1];
-        $kod = $row[2];
-        $unit = $row[3];
+        $kod = @$row[$baseIndex+1];
+        $unit = $this->getUnitsId(@$row[$baseIndex+2]);
 
         $product = new Product();
         $product->name = $productName;
         $product->article = $kod;
         $product->category_id = $category->id;
-        $product->unit = $unit;
+        $product->unit_id = $unit;
 
-        $result = ($product->validate() && $product->save());
+        $result = $product->save();
 
         $this->logErrors($product);
         $this->currentProduct = $product;
@@ -136,13 +153,33 @@ class Shop extends CComponent {
     }
 
     public function createProductPricesFromRow($product, $row) {
+        $result = true;
+        $baseIndex = $this->baseIndex + 3;
         foreach($this->priceModels as $i=>$model) {
-            $index = 3+$i;
+            $index = $baseIndex+$i;
             if(isset($row[$index])) {
-                $price = new Pro
+                $priceVal = floatval($row[$index]);
+                $currency = $this->currencies[$i];
+
+                $price = new ProductPrice();
+                $price->price_model_id = $i;
+                $price->product = $product;
+                $price->product_id = $product->id;
+                $price->price = $priceVal;
+                $price->currency = $currency;
+
+                $result = $result && $price->save();
+                $this->logErrors($price);
             }
         }
-        return $prices;
+        return $result;
+    }
+
+
+    public function getUnitsId($name) {
+        $units = array('шт');
+        $result = in_array($name, $units) ? 0 : 1;
+        return $result;
     }
 
 

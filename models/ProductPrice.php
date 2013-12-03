@@ -14,6 +14,9 @@
  */
 class ProductPrice extends CActiveRecord
 {
+    public function getName() {
+        return $this->product->name;
+    }
 	/**
 	 * @return string the associated database table name
 	 */
@@ -30,8 +33,8 @@ class ProductPrice extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('price_model_id, product_id, price', 'required'),
-			array('price_model_id, product_id', 'numerical', 'integerOnly'=>true),
+			array('product_id, price', 'required'),
+			array('product_id', 'numerical', 'integerOnly'=>true),
 			array('price', 'numerical'),
 			array('currency', 'length', 'max'=>3),
 			// The following rule is used by search().

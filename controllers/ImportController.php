@@ -6,7 +6,6 @@
  *
  */
 
-require_once Yii::getPathOfAlias('shop.extensions').'/Excel/reader.php';
 
 class ImportController extends Controller {
 

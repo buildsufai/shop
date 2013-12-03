@@ -10,7 +10,7 @@
  * @property string $description
  * @property string $content
  * @property integer $ord
- * @property integer $main
+ * @property integer $is_main
  * @property string $image
  *
  * The followings are the available model relations:
@@ -38,7 +38,8 @@ class ProductCategory extends CActiveRecord
         // will receive user inputs.
         return array(
             array('name', 'required'),
-            array('parent_id, ord, is_main', 'numerical', 'integerOnly' => true),
+            array('parent_id, ord', 'numerical', 'integerOnly' => true),
+            array('is_main', 'boolean'),
             array('name, image', 'length', 'max' => 255),
             array('description, content', 'safe'),
             // The following rule is used by search().
