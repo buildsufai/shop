@@ -51,7 +51,6 @@ class Shop extends CComponent {
             $errors = $model->getErrors();
             foreach($errors as $attr=>$error) {
                 $errorMessage = $attr.': '.implode(', ', $error);
-                var_dump($errorMessage);
                 Yii::log($errorMessage, $status);
             }
         } else {
