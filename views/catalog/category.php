@@ -9,3 +9,6 @@
 
 echo $model->content;
 
+$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+    'dataProvider'=>$products,
+));
