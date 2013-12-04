@@ -23,8 +23,6 @@
  * @property ProductPhoto[] $photos
  * @property ProductPrice[] $prices
  * @property Product[] $resources
- * @property Supply[] $supplies
- * @property Warehouse[] $warehouses
  */
 class Product extends CActiveRecord
 {
@@ -33,6 +31,14 @@ class Product extends CActiveRecord
 
         );
     }
+
+    public function getListAttributes() {
+        return array(
+
+        );
+    }
+
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -56,7 +62,7 @@ class Product extends CActiveRecord
 			array('name, image', 'length', 'max'=>255),
 			array('description, content', 'safe'),
 			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+
 			array('id, category_id, unit_id, manufacturer_id, article, name, description, content, price, image', 'safe', 'on'=>'search'),
 		);
 	}
@@ -114,7 +120,6 @@ class Product extends CActiveRecord
 	 */
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
