@@ -19,16 +19,20 @@
  * @property Order[] $orders
  * @property ProductCategory $category
  * @property Manufacturer $manufacturer
- * @property ProductChar[] $productChars
- * @property ProductPhoto[] $productPhotos
- * @property ProductPrice[] $productPrices
- * @property ProductResource[] $productResources
- * @property ProductResource[] $productResources1
+ * @property ProductChar[] $chars
+ * @property ProductPhoto[] $photos
+ * @property ProductPrice[] $prices
+ * @property Product[] $resources
  * @property Supply[] $supplies
  * @property Warehouse[] $warehouses
  */
 class Product extends CActiveRecord
 {
+    public function getGridAttributes() {
+        return array(
+
+        );
+    }
 	/**
 	 * @return string the associated database table name
 	 */
@@ -72,7 +76,6 @@ class Product extends CActiveRecord
 			'photos' => array(self::HAS_MANY, 'ProductPhoto', 'product_id'),
 			'prices' => array(self::HAS_MANY, 'ProductPrice', 'product_id'),
 			'resources' => array(self::MANY_MANY, 'Product', 'product_resource(product_id, resource_id'),
-			'productResources1' => array(self::HAS_MANY, 'ProductResource', 'product_id'),
 			'supplies' => array(self::HAS_MANY, 'Supply', 'product_id'),
 			'warehouses' => array(self::MANY_MANY, 'Warehouse', 'warehouse_rest(product_id, warehouse_id)'),
 		);

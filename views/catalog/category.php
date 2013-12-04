@@ -5,10 +5,17 @@
  * Time: 2:08
  *
  * @var ProductCategory $model
+ * @var Product $itemModel
  */
 
+echo '<div class="page-heading"><h1>'.$model->name.'</h1></div>';
 echo $model->content;
 
-$this->widget('bootstrap.widgets.TbExtendedGridView', array(
-    'dataProvider'=>$products,
-));
+$this->widget('bootstrap.widgets.TbExtendedGridView', array_merge_recursive($itemModel->getGridAttributes(), array(
+    'id' => 'product-grid',
+    'dataProvider' => $itemModel->search(),
+    'filter' => $itemModel,
+    'columns' => array(
+
+    ),
+)));
