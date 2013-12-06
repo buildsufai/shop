@@ -4,6 +4,8 @@
  * Date: 27.11.13
  * Time: 2:08
  *
+ * Страница категории товаров
+ *
  * @var ProductCategory $model
  * @var Product $itemModel
  */
@@ -25,6 +27,6 @@ if($productListView==='table') {
     $this->widget('bootstrap.widgets.TbListView', array_merge_recursive($itemModel->getListAttributes(), array(
         'id' => 'product-list',
         'dataProvider' => $itemDataProvider,
-        'item_view'=>'_product',
+        'itemView'=>'_product',
     )));
 }

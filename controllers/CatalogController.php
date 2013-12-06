@@ -38,7 +38,7 @@ class CatalogController extends Controller
         $itemModel->category_id = $model->id;
         $this->pageTitle = $model->name;
         $this->render('category', array(
-            'productListView'=>'table',
+            'productListView'=>'list',
             'model' => $model,
             'itemModel' => $itemModel,
         ));

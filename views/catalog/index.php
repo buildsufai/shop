@@ -7,12 +7,7 @@
  * @var ProductCategory $model
  */
 
-?>
-    <ul class="media-list">
-<?
 $this->widget('bootstrap.widgets.TbListView', array(
     'dataProvider' => $model->search(),
     'itemView' => '_category'
 ));
-
-?> </ul>
