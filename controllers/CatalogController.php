@@ -30,9 +30,17 @@ class CatalogController extends Controller
         if (!$model) {
             throw new CHttpException(404, ShopModule::t('Category not found'));
         }
+        $itemModel = new Product('search');
+        $itemModel->unsetAttributes();
+        if(isset($_GET['Product'])) {
+            $itemModel->attributes = $_GET['Product'];
+        }
+        $itemModel->category_id = $model->id;
         $this->pageTitle = $model->name;
         $this->render('category', array(
-            'model' => $model
+            'productListView'=>'list',
+            'model' => $model,
+            'itemModel' => $itemModel,
         ));
     }
 

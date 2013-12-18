@@ -4,13 +4,14 @@
  * Date: 27.11.13
  * Time: 2:32
  *
+ * Одна категория в списке
+ *
  * @var ProductCategory $data
  */
 
 $url = array('/shop/catalog/category', 'id' => $data->id);
 ?>
 
-<ul class="media-list">
     <li class="media">
         <? if ($data->image) {
             echo CHtml::link(
@@ -27,4 +28,3 @@ $url = array('/shop/catalog/category', 'id' => $data->id);
             </ul>
         </div>
     </li>
-</ul>

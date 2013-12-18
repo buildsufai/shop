@@ -10,7 +10,7 @@
  * @property string $description
  * @property string $content
  * @property integer $ord
- * @property integer $main
+ * @property integer $is_main
  * @property string $image
  *
  * The followings are the available model relations:
@@ -38,11 +38,12 @@ class ProductCategory extends CActiveRecord
         // will receive user inputs.
         return array(
             array('name', 'required'),
-            array('parent_id, ord, main', 'numerical', 'integerOnly' => true),
+            array('parent_id, ord', 'numerical', 'integerOnly' => true),
+            array('is_main', 'boolean'),
             array('name, image', 'length', 'max' => 255),
             array('description, content', 'safe'),
             // The following rule is used by search().
-            array('id, name, parent_id, description, content, main', 'safe', 'on' => 'search'),
+            array('id, name, parent_id, description, content, is_main', 'safe', 'on' => 'search'),
         );
     }
 
@@ -73,7 +74,7 @@ class ProductCategory extends CActiveRecord
             'description' => 'Description',
             'content' => 'Content',
             'ord' => 'Ord',
-            'main' => 'Main',
+            'is_main' => 'Main',
             'image' => 'Image',
         );
     }
@@ -100,7 +101,7 @@ class ProductCategory extends CActiveRecord
         $criteria->compare('parent_id', $this->parent_id);
         $criteria->compare('description', $this->description, true);
         $criteria->compare('content', $this->content, true);
-        $criteria->compare('main', $this->main);
+        $criteria->compare('is_main', $this->is_main);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
