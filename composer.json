@@ -1,0 +1,26 @@
+{
+	"name": "melnikk/shop",
+	"description": "Yii shop module",
+	"keywords": ["yii","yii2","shop"],
+	"homepage": "http://melniki.pro/shop",
+	"type": "project",
+	"license": "BSD-3-Clause",
+	"support": {
+		"issues": "https://melniki.pro/support",
+		"wiki": "https://github.com/melnikk/shop/wiki",
+		"source": "https://github.com/melnikk/shop"
+	},
+	"minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:melnikk/shop.git"
+        }
+    ],
+	"require": {
+		"php": ">=5.4.0",
+	},
+	"extra": {
+		"writable": []
+	}
+}
