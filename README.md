@@ -15,7 +15,14 @@ Features
 Installation
 ------------
 
-Download the package into your modules directory.
+Download the package into your modules directory. Install module in your config:
+```php
+'modules'=>array(
+	'shop',
+	...
+),
+```
+
 After place the Shop configuration array inside your 'components' definitions.
 
 ```php
@@ -24,6 +31,12 @@ After place the Shop configuration array inside your 'components' definitions.
 	...
 ),
 ```
+
+Preload your component:
+```php
+	'preload'=>array('log', 'bootstrap','shop'),
+```
+
 
 Shopping Cart widget
 --------------------
