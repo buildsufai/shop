@@ -63,6 +63,7 @@ class Shop extends CComponent {
     //--------------------------------------------------------------------------------------------  Excel import
 
     public $baseIndex = 12;
+    public $priceIndex = 15;
     public $cleanTables = false;
 
     protected function cleanTables() {
@@ -134,14 +135,18 @@ class Shop extends CComponent {
         $this->isProductRow = true;
 
         $baseIndex = $this->baseIndex;
+        $priceIndex = $this->priceIndex;
+
         $productName = $row[1];
         $kod = @$row[$baseIndex+1];
         $unit = $this->getUnitsId(@$row[$baseIndex+2]);
+        $price = intval(@$row[$priceIndex]);
 
         $product = new Product();
         $product->name = $productName;
         $product->article = $kod;
         $product->category_id = $category->id;
+        $product->price = $price;
         $product->unit_id = $unit;
 
         $result = $product->save();
