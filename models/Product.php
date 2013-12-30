@@ -94,16 +94,18 @@ class Product extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'category_id' => 'Category',
-			'unit_id' => 'Unit',
-			'manufacturer_id' => 'Manufacturer',
-			'article' => 'Article',
-			'name' => 'Name',
-			'description' => 'Description',
-			'content' => 'Content',
-			'price' => 'Price',
-			'image' => 'Image',
-		);
+            'category_id' => ShopModule::t('Category'),
+            'unit_id' => ShopModule::t('Unit'),
+            'manufacturer_id' => ShopModule::t('Manufacturer'),
+            'article' => ShopModule::t('Article'),
+            'name' => ShopModule::t('Name'),
+            'description' => ShopModule::t('Description'),
+            'content' => ShopModule::t('Content'),
+            'price' => ShopModule::t('Price'),
+            'image' => ShopModule::t('Image'),
+            'total' => ShopModule::t('Total'),
+            'count' => ShopModule::t('Count'),
+        );
 	}
 
 	/**
