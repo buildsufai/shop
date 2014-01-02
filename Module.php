@@ -9,6 +9,7 @@ namespace shop;
 
 class Module extends \yii\base\Module {
 
+    public $defaultRoute = 'categories';
     public $controllerNamespace = 'shop\controllers';
 
     /**
