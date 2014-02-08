@@ -66,31 +66,37 @@ class Shop extends CComponent {
     public $priceIndex = 15;
     public $cleanTables = false;
 
-    protected function cleanTables() {
+    protected function cleanTables($parentId) {
         ProductPrice::model()->deleteAll();
         Product::model()->deleteAll();
-        ProductCategory::model()->deleteAll();
     }
 
-    public function importCatalogFromExcel($filename, &$stat = array()) {
+    public function importCatalogFromExcel($filename, &$stat = array(), $parent, $categories = array()) {
         Yii::import('application.modules.shop.components.reader', true);
 
-        if($this->cleanTables) $this->cleanTables();
+        if($this->cleanTables) $this->cleanTables($parent->id);
 
         $data = new Spreadsheet_Excel_Reader();
         $data->setOutputEncoding('UTF8');
 
         $data->read($filename);
         $data->sheets[0]['cells'];
-        $currentCategory = null;
+        $this->currentCategory = $parent;
+        $needParse = false;
         for ($i = 7; $i <= $data->sheets[0]['numRows']; $i++) {
             $row = $data->sheets[0]['cells'][$i];
             if($this->isCategory($row)) {
-                $parentId = $this->isProductRow ? 0 : $this->currentCategory->id;
+                $needParse = in_array($i, $categories);
+                if(!$needParse) {
+                    continue;
+                }
+                $parentId = $this->isProductRow ? 0 : $parent->id;
                 $this->createCategoryFromRow($parentId, $row);
             } else {
-                $this->createProductFromRow($this->currentCategory, $row);
-                $this->createProductPricesFromRow($this->currentProduct, $row);
+                if($needParse) {
+                    $this->createProductFromRow($this->currentCategory, $row);
+                    $this->createProductPricesFromRow($this->currentProduct, $row);
+                }
             }
         }
         $stat['rowCount'] = $data->sheets[0]['numRows'];
@@ -113,9 +119,10 @@ class Shop extends CComponent {
         $categoryName = $row[1];
 
         $category = new ProductCategory();
+        $category->model = 'ProductCategory';
+        $category->act = 1;
         $category->name = $categoryName;
         $category->parent_id = $parentId;
-        $category->is_main = false;
 
         $result = $category->save();
 
@@ -192,6 +199,100 @@ class Shop extends CComponent {
         return $result;
     }
 
+    //---------------------------------------------------------- cart
+
+    public $orders = array();
+
+    public function addToCart($id, $count) {
+        $this->setOrderCount($id, $count);
+        $result = array(
+            'success'=>true
+        );
+    }
+    public function getOrderSum($id)
+    {
+        $count = $this->getOrderCount($id);
+        $price = $this->getPrice($id);
+        $sum = $count * $price;
+        return number_format($sum, 2, '.', '');
+    }
+
+    public function getOrderTotal()
+    {
+        $total = 0;
+        foreach ($this->orders as $id => $count) {
+            $price = $this->getPrice($id);
+            $total += $count * $price;
+        }
+        return number_format($total, 2, '.', '');
+
+    }
+
+    public function getOrderItems()
+    {
+        $crit = $this->getOrderItemsCriteria();
+        $items = Product::model()->findAll($crit);
+        return $items;
+    }
+
+    public function getOrderItemsCriteria()
+    {
+        $crit = new CDbCriteria();
+        $crit->addInCondition('id', array_keys($this->orders));
+        return $crit;
+    }
+
+    public function getOrderCount($id)
+    {
+        return isset($this->orders[$id]) ? $this->orders[$id] : 0;
+    }
+
+    public function setOrderCount($id, $count)
+    {
+        if (!$count) {
+            $this->removeFromOrder($id);
+        } else {
+            $this->orders[$id] = $count;
+        }
+        $this->saveSession();
+    }
+
+    public function removeFromOrder($id)
+    {
+        unset($this->orders[$id]);
+        $this->saveSession();
+    }
+
+    public function loadSession()
+    {
+        $orders = Yii::app()->session['orders'];
+        if (!$orders) {
+            $orders = array();
+            Yii::app()->session['orders'] = $orders;
+        }
+        $this->orders = $orders;
+
+        $currentSorter = Yii::app()->session['currentSorter'];
+        if (!$currentSorter) {
+            Yii::app()->session['currentSorter'] = $this->currentSorter;
+        } else {
+            $this->currentSorter = $currentSorter;
+        }
+    }
+
+    /**
+     * @param string $currentSorter
+     */
+    public function setCurrentSorter($currentSorter)
+    {
+        $this->currentSorter = $currentSorter;
+        $this->saveSession();
+    }
 
 
+    public function saveSession()
+    {
+        Yii::app()->session['orders'] = $this->orders;
+        Yii::app()->session['currentSorter'] = $this->currentSorter;
+    }
 } 
